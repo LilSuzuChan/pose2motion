@@ -1,9 +1,8 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import './three-loader.mjs';
 
-const THREE = await import('../web/vendor/three.module.js');
-const { createCharacterPlayer, REST_MOTION } = await import('../web/viewer/character-player.js');
+const THREE = await import('three');
+const { createCharacterPlayer, REST_MOTION } = await import('../src/viewer/character-player.js');
 
 function makeCharacter(id) {
   const scene = new THREE.Group();
@@ -82,4 +81,29 @@ test('a slower load cannot replace the most recently selected character', async 
   assert.equal(player.character.id, 'fast');
   await assert.rejects(player.select('missing'), /Unknown character/);
   assert.equal(player.character.id, 'fast');
+});
+
+test('disposing the player releases cached geometry and ignores a pending load', async () => {
+  const pivot = new THREE.Group();
+  let finishLoad;
+  const first = makeCharacter('first');
+  const geometry = new THREE.BoxGeometry();
+  let released = 0;
+  geometry.addEventListener('dispose', () => released++);
+  first.scene.add(new THREE.Mesh(geometry, new THREE.MeshBasicMaterial()));
+  const player = createCharacterPlayer(pivot, {
+    first: async () => first,
+    slow: () =>
+      new Promise((resolve) => {
+        finishLoad = resolve;
+      }),
+  });
+  await player.select('first');
+  const pending = player.select('slow');
+  player.dispose();
+  finishLoad(makeCharacter('slow'));
+  assert.equal(await pending, null);
+  assert.equal(released, 1);
+  assert.equal(pivot.children.length, 0);
+  assert.equal(player.character, undefined);
 });

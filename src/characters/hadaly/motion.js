@@ -30,7 +30,7 @@ export function createHadalyMotion(scene, motionSource, appearance) {
   for (const name of required) {
     if (!bones[name]) throw new Error(`Motion source is missing ${name}`);
   }
-  // Remove display transforms before reading the motion source joints.
+
   const inverseScene = new THREE.Matrix4();
   const bodyRotation = new THREE.Quaternion();
   const headRotation = new THREE.Quaternion();

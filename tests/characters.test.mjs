@@ -1,14 +1,13 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import './three-loader.mjs';
 
-const THREE = await import('../web/vendor/three.module.js');
-const { GLTFLoader } = await import('../web/vendor/GLTFLoader.js');
-const { createHadaly } = await import('../web/characters/hadaly.js');
+const THREE = await import('three');
+const { GLTFLoader } = await import('three/addons/loaders/GLTFLoader.js');
+const { createHadaly } = await import('../src/characters/hadaly.js');
 
 async function source() {
-  const bytes = readFileSync(new URL('../web/assets/RobotExpressive.glb', import.meta.url));
+  const bytes = readFileSync(new URL('../public/assets/RobotExpressive.glb', import.meta.url));
   return new GLTFLoader().parseAsync(
     bytes.buffer.slice(bytes.byteOffset, bytes.byteOffset + bytes.byteLength),
     '',
@@ -86,7 +85,7 @@ test('display pivot rotation, scale and position do not distort the retargeted p
   const before = names.map((name) =>
     model.scene.getObjectByName('HadalyAppearance').getObjectByName(name).position.clone(),
   );
-  
+
   pivot.rotation.y = 1.2;
   pivot.scale.setScalar(1.5);
   pivot.position.set(0, 0.7, 0);

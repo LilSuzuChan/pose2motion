@@ -1,7 +1,9 @@
-import { GLTFLoader } from '../vendor/GLTFLoader.js';
+import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 
 export async function loadRobotExpressive() {
-  const gltf = await new GLTFLoader().loadAsync('./assets/RobotExpressive.glb');
+  const gltf = await new GLTFLoader().loadAsync(
+    `${import.meta.env?.BASE_URL ?? '/'}assets/RobotExpressive.glb`,
+  );
   return {
     id: 'robot-expressive',
     label: 'RobotExpressive',

@@ -2,6 +2,22 @@ import * as THREE from 'three';
 
 export const REST_MOTION = 'rest';
 
+function disposeCharacter(character) {
+  const resources = new Set();
+  character.scene.traverse((object) => {
+    if (object.geometry) resources.add(object.geometry);
+    const materials = Array.isArray(object.material) ? object.material : [object.material];
+    for (const material of materials) {
+      if (!material) continue;
+      resources.add(material);
+      for (const value of Object.values(material)) {
+        if (value?.isTexture) resources.add(value);
+      }
+    }
+  });
+  for (const resource of resources) resource.dispose();
+}
+
 export function createCharacterPlayer(pivot, loaders) {
   const cache = new Map();
   let character;
@@ -11,6 +27,7 @@ export function createCharacterPlayer(pivot, loaders) {
   let loadVersion = 0;
   let speed = 1;
   let paused = false;
+  let disposed = false;
 
   function play(name) {
     if (!mixer) return;
@@ -29,12 +46,17 @@ export function createCharacterPlayer(pivot, loaders) {
   }
 
   async function select(id) {
+    if (disposed) return null;
     const version = ++loadVersion;
     let next = cache.get(id);
     if (!next) {
       const load = loaders[id];
       if (!load) throw new Error(`Unknown character: ${id}`);
       next = await load();
+      if (disposed) {
+        disposeCharacter(next);
+        return null;
+      }
       cache.set(id, next);
     }
     if (version !== loadVersion) return null;
@@ -68,6 +90,18 @@ export function createCharacterPlayer(pivot, loaders) {
     update(delta) {
       mixer?.update(delta);
       character?.update?.();
+    },
+    dispose() {
+      disposed = true;
+      loadVersion++;
+      mixer?.stopAllAction();
+      if (character) mixer?.uncacheRoot(character.animationRoot || character.scene);
+      pivot.clear();
+      for (const cached of cache.values()) disposeCharacter(cached);
+      cache.clear();
+      mixer = undefined;
+      character = undefined;
+      actions.clear();
     },
   };
 }

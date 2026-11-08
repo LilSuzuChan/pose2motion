@@ -1,0 +1,32 @@
+{
+  "name": "dome-motion",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=22.15.0"
+  },
+  "scripts": {
+    "dev": "vite --host 127.0.0.1",
+    "build": "vite build",
+    "preview": "vite preview --host 127.0.0.1",
+    "test": "npm run test:core && npm run test:ui",
+    "test:core": "node --test tests/*.test.mjs",
+    "test:ui": "vitest run",
+    "format": "prettier --write src tests index.html vite.config.js package.json .prettierrc.json",
+    "format:check": "prettier --check src tests index.html vite.config.js package.json .prettierrc.json"
+  },
+  "dependencies": {
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0",
+    "three": "0.180.0"
+  },
+  "devDependencies": {
+    "@testing-library/react": "^16.3.0",
+    "@vitejs/plugin-react": "^5.0.0",
+    "jsdom": "^26.1.0",
+    "prettier": "3.6.2",
+    "vite": "^7.0.0",
+    "vitest": "4.0.18"
+  }
+}

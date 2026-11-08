@@ -98,7 +98,7 @@ export function createHadalyAppearance() {
   addEllipsoid(head, 'Nose tip', [0, 0.052, 0.27], [0.04, 0.027, 0.039], materials.pale);
   addEllipsoid(head, 'Upper lip', [0, -0.03, 0.246], [0.07, 0.01, 0.009], materials.lip);
   addEllipsoid(head, 'Lower lip', [0, -0.045, 0.245], [0.057, 0.009, 0.008], materials.lip);
-  
+
   for (const side of [-1, 1]) {
     const eye = addEllipsoid(
       head,

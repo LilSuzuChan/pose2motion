@@ -37,14 +37,16 @@ export function createVideoRecorder({
   onError,
 }) {
   let recording = false;
+  let disposed = false;
+  let cancelRecording = () => {};
   const supported =
     typeof MediaRecorder !== 'undefined' && typeof canvas.captureStream === 'function';
 
   function start() {
-    if (recording) return;
+    if (recording || disposed) return;
     const type = supported && MIME_TYPES.find((type) => MediaRecorder.isTypeSupported(type));
     if (!type) {
-      onError('このブラウザではWebM保存に対応していません。Chrome等をお試しください。');
+      onError('このブラウザではWebM保存に対応していません');
       return;
     }
 
@@ -69,11 +71,11 @@ export function createVideoRecorder({
       cancelAnimationFrame(frame);
       stream?.getTracks().forEach((track) => track.stop());
       recording = false;
-      onStateChange(false);
+      cancelRecording = () => {};
+      if (!disposed) onStateChange(false);
     }
 
     function copyFrame(startedAt) {
-      // captureStream ignores CSS transforms, so mirror the recorded pixels here.
       drawRecordingFrame(context, canvas, isMirrored());
       onProgress(Math.min(10, Math.floor((performance.now() - startedAt) / 1000)));
       frame = requestAnimationFrame(() => copyFrame(startedAt));
@@ -88,15 +90,20 @@ export function createVideoRecorder({
       recorder.onerror = () => {
         failed = true;
         cleanup();
-        onError('録画に失敗しました。別のブラウザでお試しください。');
+        if (!disposed) onError('録画に失敗しました。');
       };
       recorder.onstop = () => {
         cleanup();
-        if (failed) return;
+        if (failed || disposed) return;
         downloadVideo(chunks, type);
         onComplete();
       };
       recorder.start();
+      cancelRecording = () => {
+        failed = true;
+        if (recorder.state === 'recording') recorder.stop();
+        cleanup();
+      };
       recording = true;
       onStateChange(true);
       copyFrame(performance.now());
@@ -117,5 +124,9 @@ export function createVideoRecorder({
       return recording;
     },
     start,
+    dispose() {
+      disposed = true;
+      cancelRecording();
+    },
   };
 }

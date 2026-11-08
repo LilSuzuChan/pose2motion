@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { drawRecordingFrame, createVideoRecorder } from '../web/viewer/recorder.js';
+import { drawRecordingFrame, createVideoRecorder } from '../src/viewer/recorder.js';
 
 test('recording preserves the source aspect ratio and mirrors actual pixels', () => {
   const operations = [];
@@ -101,7 +101,7 @@ test('recording setup failure releases the stream and resets the recording state
       message = error;
     },
   });
-  
+
   recorder.start();
   assert.equal(stopped, true);
   assert.equal(recorder.recording, false);
