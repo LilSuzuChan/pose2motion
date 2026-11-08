@@ -1,1 +1,0 @@
-"""Video pose extraction PoC."""

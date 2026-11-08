@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Dome Motion — 反射表示テスト</title>
+    <link rel="stylesheet" href="style.css" />
+    <script type="importmap">
+      { "imports": { "three": "./vendor/three.module.js" } }
+    </script>
+  </head>
+  <body>
+    <main id="stage" aria-label="キャラクターの表示領域"></main>
+    <aside id="panel">
+      <div class="eyebrow">POSE2MOTION / LOCAL LAB</div>
+      <h1>Dome Motion</h1>
+      <p>黒い空間に、動きを灯す。</p>
+      <div id="status" role="status">モデルを読み込み中…</div>
+      <label
+        >キャラクター<select id="character">
+          <option value="robot-expressive">RobotExpressive（既存）</option>
+          <option value="hadaly">ハダリ / 造形スタディ</option>
+        </select></label
+      >
+      <p id="characterNote" class="hint"></p>
+      <label>モーション<select id="motion" disabled></select></label>
+      <label
+        >再生速度 <output id="speedValue">1.0×</output
+        ><input id="speed" type="range" min="0.2" max="2" step="0.1" value="1"
+      /></label>
+      <label
+        >表示サイズ<input id="size" type="range" min="0.5" max="1.6" step="0.05" value="1"
+      /></label>
+      <label>向き<input id="angle" type="range" min="-180" max="180" step="1" value="0" /></label>
+      <label
+        >上下位置<input id="height" type="range" min="-1" max="1" step="0.05" value="0"
+      /></label>
+      <label class="check"><input id="mirror" type="checkbox" /> 左右反転（反射用）</label>
+      <div class="buttons">
+        <button id="pause" disabled>一時停止</button><button id="reset">設定を戻す</button>
+      </div>
+      <button id="present" class="primary">表示モード / 全画面</button>
+      <button id="record" disabled>10秒の動画を保存（WebM）</button>
+      <p class="hint">
+        表示モードから戻る：Esc または画面タップ<br />1方向の反射用です。実物の板で向きを調整してください。
+      </p>
+      <footer>
+        Motion: RobotExpressive · CC0 / Three.js · MIT<br /><a
+          href="assets/RobotExpressive-LICENSE.md"
+          >モデルの出典</a
+        >
+      </footer>
+    </aside>
+    <script type="module" src="app.js"></script>
+  </body>
+</html>
