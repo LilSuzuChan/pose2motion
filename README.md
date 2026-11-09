@@ -1,5 +1,12 @@
 ハダリの3Dモデルをjsで作ったけど残念になったので、別の方法でちゃんと作る。軌跡としてこれは残す
 
+
+https://github.com/user-attachments/assets/f126047a-4c99-438b-bc08-626ef6fa213e
+
+
+
+
+
 - 起動
 
 Node.js 22.15以降とnpmを使います。リポジトリのルートで実行します
